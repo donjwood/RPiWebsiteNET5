@@ -33,7 +33,7 @@ namespace RPiWebsiteNET5
                  .AddCookie(cookieOptions =>  
                  {  
                      cookieOptions.Cookie.Name = "UserLoginCookie";  
-                     cookieOptions.LoginPath = "/Login/UserLogin";  
+                     cookieOptions.LoginPath = "/Login";  
                  }).AddJwtBearer(cfg =>
                  {
                     cfg.RequireHttpsMetadata = false;
@@ -49,7 +49,10 @@ namespace RPiWebsiteNET5
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddRazorPages();
+            services.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizeFolder("/Users");
+            });
 
             services.AddDbContext<RPiWebsiteContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("RPiWebsiteContext")));
