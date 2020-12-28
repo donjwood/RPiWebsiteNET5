@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuelidate from 'vuelidate';
-import LoginApp from './Login.vue'
+import LoginApp from './components/Login.vue'
 
 Vue.use(Vuelidate);
 

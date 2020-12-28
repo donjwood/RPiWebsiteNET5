@@ -7,6 +7,6 @@ module.exports = {
     outputDir: "../wwwroot/app",
     pages: {
         index: "src/main.js",
-        login: "src/login.js"
+        editUser: "src/editUser.js"
     }
 };

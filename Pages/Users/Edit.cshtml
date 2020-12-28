@@ -1,11 +1,29 @@
 @page
 @model RPiWebsiteNET5.Pages.Users.EditModel
 
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit User";
 }
 
-<h1>Edit</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Manage Users</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div id="editUserApp" v-cloak>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.AntiForgeryToken()
+@Html.HiddenFor(m => m.JsonUserRecord)
+<!--h1>Edit User</h1>
 
 <h4>User</h4>
 <hr />
@@ -46,7 +64,7 @@
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="User.IsAdmin" /> @Html.DisplayNameFor(model => model.User.IsAdmin)
+                    <input class="form-check-input" asp-for="User.IsAdmin" /> @Html.DisplayNameFor(model => model.UserVM.IsAdmin)
                 </label>
             </div>
             <div class="form-group">
@@ -58,8 +76,9 @@
 
 <div>
     <a asp-page="./Index">Back to List</a>
-</div>
+</div-->
 
 @section Scripts {
+    <script src="~/app/js/editUser.js"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

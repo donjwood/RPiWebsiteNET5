@@ -51,7 +51,7 @@
     import axios from "axios";
 
     export default {
-        name: 'LoginApp',
+        name: 'Login',
         data() {
             return {
                 userName: '',

@@ -68,10 +68,11 @@ namespace RPiWebsiteNET5.Pages
                 {
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.GivenName, aUser.FirstName),
-                        //new Claim("MiddleName", aUser.MiddleName),
-                        new Claim(ClaimTypes.Surname, aUser.LastName),
-                        //new Claim(ClaimTypes.Email, aUser.Email),
+                        new Claim(ClaimTypes.Sid, aUser.ID.ToString()),
+                        new Claim(ClaimTypes.GivenName, !String.IsNullOrEmpty(aUser.FirstName) ? aUser.FirstName : String.Empty),
+                        new Claim("MiddleName", !String.IsNullOrEmpty(aUser.MiddleName) ? aUser.MiddleName : String.Empty),
+                        new Claim(ClaimTypes.Surname, !String.IsNullOrEmpty(aUser.LastName) ? aUser.LastName : String.Empty),
+                        new Claim(ClaimTypes.Email, !String.IsNullOrEmpty(aUser.Email) ? aUser.Email : String.Empty),
                         new Claim(ClaimTypes.Name, aUser.UserName),
                         new Claim("IsAdmin", aUser.IsAdmin.ToString()),
                         new Claim("DisplayName", aUser.FirstName + " " + aUser.LastName)
