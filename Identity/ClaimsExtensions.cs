@@ -15,5 +15,15 @@ namespace RPiWebsiteNET5.Identity.Extensions
             var claim = GetClaim(principal, claimType);
             return claim != null ? claim.Value : null;
         }
+
+        public static int GetClaimIntValue(this ClaimsPrincipal principal, string claimType)
+        {
+            return int.Parse(GetClaimValue(principal, claimType));
+        }
+
+        public static bool GetClaimBoolValue(this ClaimsPrincipal principal, string claimType)
+        {
+            return bool.Parse(GetClaimValue(principal, claimType));
+        }
     }
 }

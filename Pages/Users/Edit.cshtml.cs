@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RPiWebsiteNET5.Data;
 using RPiWebsiteNET5.Identity.Extensions;
 using RPiWebsiteNET5.Models;
@@ -25,10 +26,14 @@ namespace RPiWebsiteNET5.Pages.Users
             _context = context;
         }
 
-        public User UserRecord {get; set;}
+        [BindProperty]
+        public bool IsUpdateSuccessful { get; set; }
 
         [BindProperty]
         public UserVM UserVM { get; set; }
+
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         [BindProperty]
         public string JsonUserRecord {
@@ -40,42 +45,82 @@ namespace RPiWebsiteNET5.Pages.Users
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
+            IsUpdateSuccessful = false;
             if (id == null)
             {
                 return NotFound();
             }
 
-            UserRecord = await _context.Users.FirstOrDefaultAsync(m => m.ID == id);
+            // Check that the user is not a non-admin attempting to update someone else's record.
+            if(!User.GetClaimBoolValue("IsAdmin") && id.Value != User.GetClaimIntValue(ClaimTypes.Sid))
+            {
+                return Unauthorized();
+            }
 
-            if (UserRecord == null)
+            User userRecord = await _context.Users.FirstOrDefaultAsync(m => m.ID == id);
+
+            if (userRecord == null)
             {
                 return NotFound();
             }
 
-            UserVM = new UserVM(UserRecord);
+            UserVM = new UserVM(userRecord);
 
             return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
+            IsUpdateSuccessful = false;
+            ErrorMessage = string.Empty;
+
             if (!ModelState.IsValid)
             {
+                ErrorMessage = "Invalid input.";
                 return Page();
             }
 
-            UserVM.SaveTo(UserRecord);
-            _context.Attach(UserRecord).State = EntityState.Modified;
+            var userToUpdate = await _context.Users.FindAsync(id);
 
+            if (userToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            // Check the state of various items before proceeding with the update.
+            if(userToUpdate.Username == "admin" && UserVM.Username != "admin") 
+            {
+                // Admin username cannot be changed.
+                return Unauthorized();
+            }
+            else if(_context.Users.Any(e => e.Username == UserVM.Username && e.ID != UserVM.ID))
+            {
+                ErrorMessage = "The username \"" + UserVM.Username + "\" is already taken.";
+            }
+            else if(!User.GetClaimBoolValue("IsAdmin") && userToUpdate.ID != User.GetClaimIntValue(ClaimTypes.Sid))
+            {
+                return Unauthorized();
+            }
+            else if (UserVM.IsAdmin != userToUpdate.IsAdmin && userToUpdate.ID == User.GetClaimIntValue(ClaimTypes.Sid))
+            {
+                // Users cannot change their own admin status.
+                return Unauthorized();
+            }
+
+            // All tests passed, update the record.
             try
             {
-                await _context.SaveChangesAsync();
+                    _context.Entry(userToUpdate).CurrentValues.SetValues(UserVM);
+                    await _context.SaveChangesAsync();
+                    IsUpdateSuccessful = true;
+                    return Page();
+
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(UserRecord.ID))
+                if (!UserExists(UserVM.ID))
                 {
                     return NotFound();
                 }
@@ -85,14 +130,12 @@ namespace RPiWebsiteNET5.Pages.Users
                 }
             }
 
-            return RedirectToPage("./Index");
         }
 
         public JsonResult OnPostIsUsernameAvailable ([FromBody]User userObj)
         {
-            int currentUserID = int.Parse(User.GetClaimValue(ClaimTypes.Sid));
-            bool isAvailable = !_context.Users.Any(e => e.UserName == userObj.UserName && e.ID != currentUserID);
-            return new JsonResult(new {isUserNameAvaliable = isAvailable});
+            bool isAvailable = !_context.Users.Any(e => e.Username == userObj.Username && e.ID != userObj.ID);
+            return new JsonResult(isAvailable);
         }
 
         private bool UserExists(int id)

@@ -29,7 +29,7 @@ namespace RPiWebsiteNET5.Pages
 
         [BindProperty]
         [Required(ErrorMessage = "The username is required.")]
-        public string UserName { get; set; }
+        public string Username { get; set; }
         
         [BindProperty, DataType(DataType.Password)]
         [Required(ErrorMessage = "The password is required.")]
@@ -54,7 +54,7 @@ namespace RPiWebsiteNET5.Pages
                 // Page is valid, find user.
                 PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
 
-                User aUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == UserName);
+                User aUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == Username);
 
                 // User not found
                 if (aUser == null)
@@ -73,7 +73,7 @@ namespace RPiWebsiteNET5.Pages
                         new Claim("MiddleName", !String.IsNullOrEmpty(aUser.MiddleName) ? aUser.MiddleName : String.Empty),
                         new Claim(ClaimTypes.Surname, !String.IsNullOrEmpty(aUser.LastName) ? aUser.LastName : String.Empty),
                         new Claim(ClaimTypes.Email, !String.IsNullOrEmpty(aUser.Email) ? aUser.Email : String.Empty),
-                        new Claim(ClaimTypes.Name, aUser.UserName),
+                        new Claim(ClaimTypes.Name, aUser.Username),
                         new Claim("IsAdmin", aUser.IsAdmin.ToString()),
                         new Claim("DisplayName", aUser.FirstName + " " + aUser.LastName)
                     };

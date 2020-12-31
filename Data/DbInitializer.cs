@@ -24,13 +24,28 @@ namespace RPiWebsiteNET5.Data
             {
                 FirstName="Admin",
                 LastName="User",
-                UserName="admin",
+                Username="admin",
                 IsAdmin=true
             };
 
             adminUser.PasswordHash = passHasher.HashPassword(adminUser, "admin");
 
             context.Users.Add(adminUser);
+
+            User dwoodUser = new User
+            {
+                FirstName="Donald",
+                MiddleName="James",
+                LastName="Wood",
+                Username="dwood",
+                Email="donwood@gmail.com",
+                IsAdmin=true
+            };
+
+            dwoodUser.PasswordHash = passHasher.HashPassword(dwoodUser, "FooBar");
+
+            context.Users.Add(dwoodUser);
+
             context.SaveChanges();
         }
     }
