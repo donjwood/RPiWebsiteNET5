@@ -73,11 +73,11 @@ namespace RPiWebsiteNET5.Pages.Users
                 return Unauthorized();
             }
 
-            // Page is valid, find user.
             PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
 
             try
             {
+                // Page is valid, find user.
                 User userToUpdate = await _context.Users.FindAsync(id);
                 userToUpdate.PasswordHash = passwordHasher.HashPassword(userToUpdate, NewPassword);
                 await _context.SaveChangesAsync();

@@ -27,21 +27,13 @@ namespace RPiWebsiteNET5.Pages.Users
         }
 
         [BindProperty]
-        public bool IsUpdateSuccessful { get; set; }
-
-        [BindProperty]
         public UserVM UserVM { get; set; }
 
         [BindProperty]
         public string ErrorMessage { get; set; }
 
         [BindProperty]
-        public string JsonUserRecord {
-            get
-            {
-                return JsonSerializer.Serialize(UserVM);
-            }
-        }
+        public bool IsUpdateSuccessful { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {

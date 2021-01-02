@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RPiWebsiteNET5.Data;
+using RPiWebsiteNET5.Identity.Extensions;
 using RPiWebsiteNET5.Models;
+using RPiWebsiteNET5.ViewModels;
 
 namespace RPiWebsiteNET5.Pages.Users
 {
@@ -20,36 +22,51 @@ namespace RPiWebsiteNET5.Pages.Users
         }
 
         [BindProperty]
-        public User User { get; set; }
+        public UserVM UserVM { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
+            // Check that the user is not a non-admin attempting to delete a record.
+            if(!User.GetClaimBoolValue("IsAdmin"))
+            {
+                return Unauthorized();
+            }
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            User = await _context.Users.FirstOrDefaultAsync(m => m.ID == id);
+            User userRecord = await _context.Users.FirstOrDefaultAsync(m => m.ID == id);
 
-            if (User == null)
+            if (userRecord == null)
             {
                 return NotFound();
             }
+
+            UserVM = new UserVM(userRecord);
+
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
+            // Check that the user is not a non-admin attempting to delete a record.
+            if(!User.GetClaimBoolValue("IsAdmin"))
+            {
+                return Unauthorized();
+            }
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            User = await _context.Users.FindAsync(id);
+            User userRecord = await _context.Users.FindAsync(id);
 
-            if (User != null)
+            if (userRecord != null)
             {
-                _context.Users.Remove(User);
+                _context.Users.Remove(userRecord);
                 await _context.SaveChangesAsync();
             }
 
