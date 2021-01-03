@@ -11,124 +11,122 @@
     ViewData["Title"] = "Edit User";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h1>Edit User</h1>
-        </div>
+<div class="row">
+    <div class="col-12">
+        <h1>Edit User</h1>
     </div>
-    <div class="row">
-        <div id="editUserApp" class="col-12">
-            <form id="editUserForm" method="POST">
-                @if (Model.IsUpdateSuccessful)
-                {
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="alert alert-success" role="alert">
-                                <i class="fas fa-check"></i> Successfully submitted user changes.
-                            </div>
-                        </div>
-                    </div>
-                }
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="alert alert-danger" role="alert">
-                                <i class="fas fa-exclamation-triangle"></i> @Model.ErrorMessage
-                            </div>
-                        </div>
-                    </div>
-                }
-                <div>
-                    <div class="form-group row">
-                        <label asp-for="UserVM.FirstName" class="col-lg-3 col-xl-2 col-form-label"></label>
-                        <div class="col-lg-9 col-xl-10">
-                            <input asp-for="UserVM.FirstName" class="form-control" v-model="firstName">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label asp-for="UserVM.MiddleName" class="col-lg-3 col-xl-2 col-form-label"></label>
-                        <div class="col-lg-9 col-xl-10">
-                            <input asp-for="UserVM.MiddleName" class="form-control" v-model="middleName">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label asp-for="UserVM.LastName" class="col-lg-3 col-xl-2 col-form-label"></label>
-                        <div class="col-lg-9 col-xl-10">
-                            <input asp-for="UserVM.LastName" class="form-control" v-model="lastName">
-                        </div>
-                        <span class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10" asp-validation-for="UserVM.LastName"></span>
-                    </div>
-                    <div class="form-group row">
-                        <label asp-for="UserVM.Email" class="col-lg-3 col-xl-2 col-form-label"></label>
-                        <div class="col-lg-9 col-xl-10">
-                            <input asp-for="UserVM.Email" class="form-control" v-model="email">
-                        </div>
-                        <span class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10" asp-validation-for="UserVM.Email"></span>
-                    </div>
-                    @if (Model.UserVM.Username != "admin")
-                    {
-                        <div class="form-group row">
-                            <div class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="chkUseEmailAsUsername" name="chkUseEmailAsUsername" v-model="useEmailAsUsername">
-                                    <label for="chkUseEmailAsUsername" class="form-check-label">
-                                        Use email address as username.
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    <div class="form-group row">
-                        <label asp-for="UserVM.Username" class="col-lg-3 col-xl-2 col-form-label"></label>
-                        <div class="col-lg-9 col-xl-10">
-                            <div class="input-group">
-                                <input asp-for="UserVM.Username" class="form-control" :readonly="useEmailAsUsername" v-model="username">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                                        <span v-if="username == ''"><i class="fas fa-cog"></i></span>
-                                        <span v-else-if="isCheckingUsernameAvailability"><i class="fas fa-cog fa-spin"></i></span>
-                                        <span v-else-if="!isUsernameAvailable" style="color: red;"><i class="fas fa-times-circle"></i></span>
-                                        <span v-else style="color: green;"><i class="fas fa-check-circle"></i></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10" style="height:15px;">
-                            <span asp-validation-for="UserVM.Username"></span>
-                            <span class="field-error-message" v-if="username != '' && !isCheckingUsernameAvailability && !isUsernameAvailable">Username is unavailable.</span>
-                            <span class="field-valid-message" v-else-if="username != '' && !isCheckingUsernameAvailability && isUsernameAvailable">Username is available.</span>
-                        </div>
-                    </div>
-                    @if(Model.UserVM.Username != "admin" &&
-                        Model.UserVM.ID != User.GetClaimIntValue(ClaimTypes.Sid) && 
-                        User.GetClaimBoolValue("IsAdmin"))
-                    {
-                        <div class="form-group row">
-                            <div class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" asp-for="UserVM.IsAdmin" v-model="isAdmin">
-                                    <label for="chkIsAdmin" class="form-check-label">
-                                        This user is an admin.
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        @Html.HiddenFor(m => m.UserVM.IsAdmin)
-                    }
-                    <div class="form-group row">
-                        <div class="col-12 text-center">
-                            <button @@click="submitForm" class="btn btn-primary"><i class="fas fa-user-edit"></i> Update</button>
+</div>
+<div class="row">
+    <div id="editUserApp" class="col-12">
+        <form id="editUserForm" method="POST">
+            @if (Model.IsUpdateSuccessful)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-success" role="alert">
+                            <i class="fas fa-check"></i> Successfully submitted user changes.
                         </div>
                     </div>
                 </div>
-                @Html.HiddenFor(m => m.UserVM.ID)
-            </form>
-        </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> @Model.ErrorMessage
+                        </div>
+                    </div>
+                </div>
+            }
+            <div>
+                <div class="form-group row">
+                    <label asp-for="UserVM.FirstName" class="col-lg-3 col-xl-2 col-form-label"></label>
+                    <div class="col-lg-9 col-xl-10">
+                        <input asp-for="UserVM.FirstName" class="form-control" v-model="firstName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="UserVM.MiddleName" class="col-lg-3 col-xl-2 col-form-label"></label>
+                    <div class="col-lg-9 col-xl-10">
+                        <input asp-for="UserVM.MiddleName" class="form-control" v-model="middleName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="UserVM.LastName" class="col-lg-3 col-xl-2 col-form-label"></label>
+                    <div class="col-lg-9 col-xl-10">
+                        <input asp-for="UserVM.LastName" class="form-control" v-model="lastName">
+                    </div>
+                    <span class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10" asp-validation-for="UserVM.LastName"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="UserVM.Email" class="col-lg-3 col-xl-2 col-form-label"></label>
+                    <div class="col-lg-9 col-xl-10">
+                        <input asp-for="UserVM.Email" class="form-control" v-model="email">
+                    </div>
+                    <span class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10" asp-validation-for="UserVM.Email"></span>
+                </div>
+                @if (Model.UserVM.Username != "admin")
+                {
+                    <div class="form-group row">
+                        <div class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="chkUseEmailAsUsername" name="chkUseEmailAsUsername" v-model="useEmailAsUsername">
+                                <label for="chkUseEmailAsUsername" class="form-check-label">
+                                    Use email address as username.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="form-group row">
+                    <label asp-for="UserVM.Username" class="col-lg-3 col-xl-2 col-form-label"></label>
+                    <div class="col-lg-9 col-xl-10">
+                        <div class="input-group">
+                            <input asp-for="UserVM.Username" class="form-control" :readonly="useEmailAsUsername" v-model="username">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <span v-if="username == ''"><i class="fas fa-cog"></i></span>
+                                    <span v-else-if="isCheckingUsernameAvailability"><i class="fas fa-cog fa-spin"></i></span>
+                                    <span v-else-if="!isUsernameAvailable" style="color: red;"><i class="fas fa-times-circle"></i></span>
+                                    <span v-else style="color: green;"><i class="fas fa-check-circle"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10" style="height:15px;">
+                        <span asp-validation-for="UserVM.Username"></span>
+                        <span class="field-error-message" v-if="username != '' && !isCheckingUsernameAvailability && !isUsernameAvailable">Username is unavailable.</span>
+                        <span class="field-valid-message" v-else-if="username != '' && !isCheckingUsernameAvailability && isUsernameAvailable">Username is available.</span>
+                    </div>
+                </div>
+                @if(Model.UserVM.Username != "admin" &&
+                    Model.UserVM.ID != User.GetClaimIntValue(ClaimTypes.Sid) && 
+                    User.GetClaimBoolValue("IsAdmin"))
+                {
+                    <div class="form-group row">
+                        <div class="offset-lg-3 offset-xl-2 col-lg-9 col-xl-10">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" asp-for="UserVM.IsAdmin" v-model="isAdmin">
+                                <label for="chkIsAdmin" class="form-check-label">
+                                    This user is an admin.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @Html.HiddenFor(m => m.UserVM.IsAdmin)
+                }
+                <div class="form-group row">
+                    <div class="col-12 text-center">
+                        <button @@click="submitForm" class="btn btn-primary"><i class="fas fa-user-edit"></i> Update</button>
+                    </div>
+                </div>
+            </div>
+            @Html.HiddenFor(m => m.UserVM.ID)
+        </form>
     </div>
 </div>
 
