@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RPiWebsiteNET5.Data;
 using RPiWebsiteNET5.Models;
+using RPiWebsiteNET5.ViewModels;
 
 namespace RPiWebsiteNET5.Pages.Users
 {
@@ -19,7 +20,7 @@ namespace RPiWebsiteNET5.Pages.Users
             _context = context;
         }
 
-        public User User { get; set; }
+        public UserVM UserVM { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,12 +29,15 @@ namespace RPiWebsiteNET5.Pages.Users
                 return NotFound();
             }
 
-            User = await _context.Users.FirstOrDefaultAsync(m => m.ID == id);
+            User userRecord = await _context.Users.FirstOrDefaultAsync(m => m.ID == id);
 
-            if (User == null)
+            if (userRecord == null)
             {
                 return NotFound();
             }
+
+            UserVM = new UserVM(userRecord);
+
             return Page();
         }
     }
