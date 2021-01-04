@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+@Model.UserVMListJSON
 <h1>Index</h1>
 
 <p>
@@ -14,31 +14,28 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.User[0].FirstName)
+                @Html.DisplayNameFor(model => model.UserVMList[0].FirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User[0].MiddleName)
+                @Html.DisplayNameFor(model => model.UserVMList[0].MiddleName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User[0].LastName)
+                @Html.DisplayNameFor(model => model.UserVMList[0].LastName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User[0].Email)
+                @Html.DisplayNameFor(model => model.UserVMList[0].Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User[0].Username)
+                @Html.DisplayNameFor(model => model.UserVMList[0].Username)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User[0].PasswordHash)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].IsAdmin)
+                @Html.DisplayNameFor(model => model.UserVMList[0].IsAdmin)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.User) {
+@foreach (var item in Model.UserVMList) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
@@ -54,9 +51,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PasswordHash)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsAdmin)
