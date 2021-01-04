@@ -1,66 +1,94 @@
 @page
 @model RPiWebsiteNET5.Pages.Users.IndexModel
 
+@using System.Web
+
 @{
     ViewData["Title"] = "Index";
 }
-@Model.UserVMListJSON
-<h1>Index</h1>
+<div class="row">
+    <div class="col-12">
+        <h1>Manage Users</h1>
+    </div>
+</div>
+<div class="row">
+    <div id="manageUsersApp" class="col-12">
+        <div class="row my-3">
+            <div class="col-12 col-md-6">
+                <a class="btn btn-primary" asp-page="./Create"><i class="fas fa-user-plus"></i> Create User</a>
+            </div>
+            <label for="ddlSortOrder" class="col-form-label col-6 col-md-3 text-right">Sort Order:</label>
+            <div class="col-6 col-md-3">
+                <select class="form-control" id="ddlSortOrder" v-model="sortOrder">
+                    <option value="FirstName">First Name</option>
+                    <option value="LastName">Last Name</option>
+                    <option value="Email">Email</option>
+                    <option value="UserName">User Name</option>
+                    <option value="IsAdmin">Admin</option>
+                </select>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div v-for="aUser in sortedPagedUserList" class="col-md-12 col-lg-6 d-flex align-items-stretch" style="width: 100%;" :key=aUser.ID>
+                <div class="card flex-fill my-2" :class="{'border-dark': aUser.IsAdmin}">
+                    <h5 class="card-header">
+                        {{ aUser.FirstName }} {{ aUser.LastName }} <span v-if="aUser.isAdmin">(Admin)</span>
+                    </h5>   
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                ID: {{ aUser.ID }}<br/>
+                                First Name: {{ aUser.FirstName }}<br/>
+                                Middle Name: {{ aUser.MiddleName }}<br/>
+                                Last Name: {{ aUser.LastName }}<br/>
+                                Email: <a :href="'mailto:' + aUser.email">{{ aUser.Email }}</a><br/>
+                                Admin User: {{ aUser.IsAdmin ? 'Yes' : 'No' }}
+                            </div>  
+                        </div> 
+                        <div class="row">
+                            <div class="col-12 text-center my-2">
+                                <a class="btn btn-primary btn-block" :href="'/Users/Edit?id=' + aUser.ID"><i class="fas fa-pencil-alt"></i> Edit User</a>
+                            </div>
+                            <div class="col-12 text-center my-2">
+                                <a class="btn btn-primary btn-block" :href="'/Users/ChangePassword?id=' + aUser.ID"><i class="fas fa-key"></i> Change Password</a>
+                            </div>
+                            <div class="col-12 text-center my-2">
+                                <a class="btn btn-primary btn-block" :href="'/Users/Delete?id=' + aUser.ID"><i class="fas fa-trash"></i> Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserVMList[0].FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserVMList[0].MiddleName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserVMList[0].LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserVMList[0].Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserVMList[0].Username)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserVMList[0].IsAdmin)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.UserVMList) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MiddleName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsAdmin)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<script>
+    var manageUsersApp = new Vue({
+        el: '#manageUsersApp',
+        data: {
+            userList: @Html.Raw(Model.UserVMListJSON),
+            sortOrder: 'LastName',
+            currentPage: 1,
+            perPage: 10
+        },
+        watch: {
+            sortOrder: function (val) {
+                //Reset page number to one.
+                this.currentPage = 1;
+            }
+        },
+        computed: {
+            sortedPagedUserList: function () {
+
+            var pageStartIndex = ((this.currentPage - 1) * this.perPage);
+            var pageEndIndex = Math.min(pageStartIndex + this.perPage, this.userList.length);
+
+            return _.orderBy(this.userList, this.sortOrder, 'asc').slice(pageStartIndex, pageEndIndex);
+            },
+            numberOfPages: function () {
+                return Math.ceil(this.userList.length / this.perPage);
+            }
+        },
+    });
+</script>
