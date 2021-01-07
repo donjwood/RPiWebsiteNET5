@@ -1,10 +1,18 @@
 @page
 @model RPiWebsiteNET5.Pages.Users.DeleteModel
-
+@using RPiWebsiteNET5.Identity.Extensions
 @{
     ViewData["Title"] = "Delete";
 }
-
+@if (@User.GetClaimBoolValue("IsAdmin")) 
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="/Users/Index">Manage Users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Delete User</li>
+        </ol>
+    </nav>
+}
 <div class="row">
     <div class="col-12">
         <h1>Delete User</h1>
@@ -56,6 +64,5 @@
     
 <form method="post">
     <input type="hidden" asp-for="UserVM.ID" />
-    <input type="submit" value="Delete" class="btn btn-danger" /> |
-    <a asp-page="./Index">Back to List</a>
+    <input type="submit" value="Delete" class="btn btn-danger" />
 </form>

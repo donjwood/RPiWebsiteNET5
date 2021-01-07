@@ -1,10 +1,20 @@
 @page
 @model RPiWebsiteNET5.Pages.Users.DetailsModel
 
+@using RPiWebsiteNET5.Identity.Extensions
+
 @{
     ViewData["Title"] = "Details";
 }
-
+@if (@User.GetClaimBoolValue("IsAdmin")) 
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="/Users/Index">Manage Users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">User Details</li>
+        </ol>
+    </nav>
+}
 <div class="row">
     <div class="col-12">
         <h1>Details</h1>
@@ -54,5 +64,4 @@
     </dd>
 </dl>
 
-<a asp-page="./Edit" asp-route-id="@Model.UserVM.ID">Edit</a> |
-<a asp-page="./Index">Back to List</a>
+<a asp-page="./Edit" asp-route-id="@Model.UserVM.ID">Edit</a>

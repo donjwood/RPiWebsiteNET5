@@ -37,9 +37,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
-                    
                         @if (((System.Security.Claims.ClaimsIdentity)User.Identity).IsAuthenticated)
                         {
+                            @if (@User.GetClaimBoolValue("IsAdmin")) 
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-page="/Users/Index">Manage Users</a>
+                                </li>
+                            }
                             <li class="nav-item dropdown ml-auto">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     @User.GetClaimValue("DisplayName")

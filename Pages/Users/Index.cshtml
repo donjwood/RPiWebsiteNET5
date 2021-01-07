@@ -3,8 +3,18 @@
 
 @using System.Web
 
+@using RPiWebsiteNET5.Identity.Extensions
+
 @{
     ViewData["Title"] = "Index";
+}
+@if (@User.GetClaimBoolValue("IsAdmin")) 
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Manage Users</li>
+        </ol>
+    </nav>
 }
 <div class="row">
     <div class="col-12">
@@ -53,7 +63,7 @@
                                 <a class="btn btn-primary btn-block" :href="'/Users/ChangePassword?id=' + aUser.ID"><i class="fas fa-key"></i> Change Password</a>
                             </div>
                             <div class="col-12 text-center my-2">
-                                <a class="btn btn-primary btn-block" :href="'/Users/Delete?id=' + aUser.ID"><i class="fas fa-trash"></i> Delete</a>
+                                <a class="btn btn-danger btn-block" :href="'/Users/Delete?id=' + aUser.ID"><i class="fas fa-trash"></i> Delete</a>
                             </div>
                         </div>
                     </div>
