@@ -157,10 +157,6 @@
             isUsernameAvailable: true,
             isCheckingUsernameAvailability: false
         },
-        created () {
-            //If the username an email match, set the useEmailAsUsername property.
-            this.useEmailAsUsername = this.username == this.email && this.username != 'admin';
-        },
         watch: {
             email: function () {
                 if (this.useEmailAsUsername) {
